@@ -1,0 +1,6 @@
+repo: ed0dbd38a4828955c7cdd0ac76b57cbf8b31ce35
+node: 408c6026e1988c67764e18578e7e08fe247e8058
+branch: default
+latesttag: ros-fuerte
+latesttagdistance: 1
+changessincelatesttag: 1

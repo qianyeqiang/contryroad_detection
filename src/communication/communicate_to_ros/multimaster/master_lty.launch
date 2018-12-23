@@ -1,0 +1,7 @@
+<launch>
+  <arg name="master" />
+  <node pkg="multimaster" type="master_sync.py" name="master_lty" output="screen"> 
+    <param name="foreign_master" value="http://lty-deskyop:11311/" />      
+    <rosparam command="load" file="$(find multimaster)/config_lty.yaml" />
+  </node>
+</launch>

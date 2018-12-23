@@ -1,0 +1,2 @@
+pedestrian
+-DCATKIN_DEVEL_PREFIX=/home/jackqian/pedestrian_ws/devel -DCMAKE_INSTALL_PREFIX=/home/jackqian/pedestrian_ws/install -G Unix Makefiles

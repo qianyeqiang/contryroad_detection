@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# rospy for the subscriber
+import rospy
+# ROS Image message
+from sensor_msgs.msg import CompressedImage
+# ROS Image message -> OpenCV2 image converter
+from cv_bridge import CvBridge, CvBridgeError
+# OpenCV2 for saving an image
+import cv2
+#import numpy
+import numpy as np
+#import pedestrian message
+from pedestrian.msg import pedestrian
+from pedestrian.msg import pedestrian
+#import tensorflow as tfl
+
+# Instantiate CvBridge
+bridge = CvBridge()
+
+pedestrian_pub = 1
+# # Detection with SSD
+# 
+# In this example, we will load a SSD model and use it to detect objects.
+
+## ### 1. Setup
+## 
+## * First, Load necessary libs and set up caffe and caffe_root
+
+## In[23]:
+#import time
+#import numpy as np
+#import matplotlib.pyplot as plt
+#import cv2
+##get_ipython().magic(u'matplotlib inline')
+
+#plt.rcParams['figure.figsize'] = (10, 10)
+#plt.rcParams['image.interpolation'] = 'nearest'
+#plt.rcParams['image.cmap'] = 'gray'
+
+## Make sure that caffe is on the python path:
+#caffe_root = '/home/jackqian/caffe/'  # this file is expected to be in {caffe_root}/examples
+#import os
+#os.chdir(caffe_root)
+#import sys
+#sys.path.insert(0, 'python')
+
+#import caffe
+#caffe.set_device(0)
+#caffe.set_mode_gpu()
+
+
+## * Load LabelMap.
+
+## In[24]:
+
+#from google.protobuf import text_format
+#from caffe.proto import caffe_pb2
+
+##load PASCAL VOC labels
+#labelmap_file = '/home/jackqian/caffe/data/VOC0712/labelmap_voc.prototxt'
+##labelmap_file = '/home/jackqian/caffe/data/kitti/labelmap_kitti.prototxt'
+#file = open(labelmap_file, 'r')
+#labelmap = caffe_pb2.LabelMap()
+#text_format.Merge(str(file.read()), labelmap)
+
+#def get_labelname(labelmap, labels):
+#    num_labels = len(labelmap.item)
+#    labelnames = []
+#    if type(labels) is not list:
+#        labels = [labels]
+#    for label in labels:
+#        found = False
+#        for i in xrange(0, num_labels):
+#            if label == labelmap.item[i].label:
+#                found = True
+#                labelnames.append(labelmap.item[i].display_name)
+#                break
+#        assert found == True
+#    return labelnames
+
+
+## * Load the net in the test phase for inference, and configure input preprocessing.
+
+## In[25]:
+
+#model_def = '/home/jackqian/caffe/models/VGGNet/VOC0712/SSD_300x300/deploy.prototxt'
+#model_weights = '/home/jackqian/caffe/models/VGGNet/VOC0712/SSD_300x300/VGG_VOC0712_SSD_300x300_iter_120000.caffemodel'
+
+## model_def = '/home/jackqian/caffe/models/VGGNet/kitti/deploy.prototxt'
+## model_weights = '/home/jackqian/caffe/models/VGGNet/kitti/VGG_KITTI_lite_Expand_SSD_1241x376_iter_120000.caffemodel'
+
+#net = caffe.Net(model_def,      # defines the structure of the model
+#                model_weights,  # contains the trained weights
+#                caffe.TEST)     # use test mode (e.g., don't perform dropout)
+
+## input preprocessing: 'data' is the name of the input blob == net.inputs[0]
+#transformer = caffe.io.Transformer({'data': net.blobs['data'].data.shape})
+#transformer.set_transpose('data', (2, 0, 1))
+#transformer.set_mean('data', np.array([104,117,123])) # mean pixel
+#transformer.set_raw_scale('data', 255)  # the reference model operates on images in [0,255] range instead of [0,1]
+#transformer.set_channel_swap('data', (2,1,0))  # the reference model has channels in BGR order instead of RGB
+
+
+# ### 2. SSD detection
+
+# * Load an image.
+
+# In[26]:
+
+def image_callback(msg):
+    print("Received an image!")
+    try:
+        # Convert your ROS Image message to OpenCV2
+	np_arr = np.fromstring(msg.data, np.uint8)
+	cv2_img = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+    except CvBridgeError, e:
+        print(e)
+    else:
+        # Save your OpenCV2 image as a jpeg
+
+        # time1 = time.time()
+        # cv2.waitKey(500)
+        # time2 = time.time()
+        # print time2-time1
+
+        #cv2.imshow('camera_image1.jpeg', cv2_img)
+        cv2_img = cv2.resize(cv2_img,(684,548))
+        #cv2_img = cv2.resize(cv2_img, (342, 274))
+        cv2.imwrite("test.jpg",cv2_img)
+        image_process()
+
+        #cv2.waitKey(1)
+	cv2.waitKey(1)
+
+
+def image_process():
+
+
+
+
+
+
+    global pedestrian_pub
+    output = pedestrian()
+    output.header.stamp = rospy.get_rostime()
+    output.valid = 1
+    output.distance = 10
+#    print(output)
+    pedestrian_pub.publish(output)
+    
+
+
+def main():
+    global pedestrian_pub
+    rospy.init_node('image_listener')
+    # Define your image topic
+    image_topic = "/axis/image_rect_color/compressed"
+    # Set up your subscriber and define its callback
+    rospy.Subscriber(image_topic, CompressedImage, image_callback)
+    # publish results
+    pedestrian_pub = rospy.Publisher("/pedestrian",pedestrian,queue_size=1)
+    # Spin until ctrl + c
+    rospy.spin()
+
+if __name__ == '__main__':
+    main()

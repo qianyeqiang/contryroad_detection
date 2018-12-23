@@ -1,0 +1,2 @@
+local_pubs: [map_target,imu_torso/xsens/data,garmin/fix,rtk/fix,can_frame,crosswalk_distance]
+foreign_pubs: [/hubing/uturn_output,/hubing/complex_output]

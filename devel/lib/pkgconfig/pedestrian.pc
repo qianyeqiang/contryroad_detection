@@ -1,0 +1,8 @@
+prefix=/home/jackqian/pedestrian_ws/devel
+
+Name: pedestrian
+Description: Description of pedestrian
+Version: 0.0.0
+Cflags: -I/home/jackqian/pedestrian_ws/devel/include
+Libs: -L/home/jackqian/pedestrian_ws/devel/lib 
+Requires: 

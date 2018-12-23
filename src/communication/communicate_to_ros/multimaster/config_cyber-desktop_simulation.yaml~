@@ -1,0 +1,2 @@
+local_pubs: [can_frame,imu_torso/xsens/data,garmin/fix,rtk/fix, velocity, /Inertial/gps/vel, /Inertial/imu/data, lane, global_map, all_map,velodyne_points,/rear/velodyne_points]
+foreign_pubs: [grid_map, left_curb, right_curb,esr_info]

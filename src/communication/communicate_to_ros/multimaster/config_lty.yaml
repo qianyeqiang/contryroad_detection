@@ -1,0 +1,2 @@
+local_pubs: [/can_frame,imu_torso/xsens/data,/rtk/fix]
+foreign_pubs: []

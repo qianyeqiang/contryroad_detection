@@ -1,0 +1,2 @@
+local_pubs: [/Inertial/gps/fix, /Inertial/imu/data, /Inertial/gps/vel, /can_frame, /imu_torso/xsens/data]
+foreign_pubs: []

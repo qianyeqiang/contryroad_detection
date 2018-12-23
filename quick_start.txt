@@ -1,0 +1,4 @@
+roscore
+source devel/setup.bash
+rosrun pedestrian ped_detection.py 
+rosbag play pedestrian_ws/all_map_kadun.bag -l

@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# rospy for the subscriber
+import rospy
+# ROS Image message
+from sensor_msgs.msg import CompressedImage
+# ROS Image message -> OpenCV2 image converter
+from cv_bridge import CvBridge, CvBridgeError
+# OpenCV2 for saving an image
+import cv2
+#import numpy
+import numpy as np
+#import pedestrian message
+from pedestrian.msg import pedestrian
+# Instantiate CvBridge
+bridge = CvBridge()
+
+from tulu_detection import tulu_detection
+from tulu_detection import tulu_detection_OSTN
+
+filter_image = []
+
+def image_process():
+
+    global pedestrian_pub
+    output = pedestrian()
+    output.header.stamp = rospy.get_rostime()
+    output.valid = 1
+    output.distance = 10
+#    print(output)
+    pedestrian_pub.publish(output)
+    
+def image_callback(msg):
+    print("Received an image!!!")
+    try:
+        # Convert your ROS Image message to OpenCV2
+	np_arr = np.fromstring(msg.data, np.uint8)
+	#cv2_img = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
+	cv2_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+    except CvBridgeError, e:
+        print(e)
+    else:
+        # Save your OpenCV2 image as a jpeg
+
+        # time1 = time.time()
+        # cv2.waitKey(500)
+        # time2 = time.time()
+        # print time2-time1
+
+        # cv2.imshow('axis_image', cv2_img)
+        
+        
+        result_image = tulu_detection(cv2_img)
+        cv2.imshow("open", result_image)
+        
+        filter_image.append(result_image)
+        if len(filter_image)==6:
+            filter_image.pop(0)
+        result =cv2.bitwise_or(cv2.bitwise_or(cv2.bitwise_or(cv2.bitwise_or(filter_image[0], filter_image[1]), filter_image[2]), filter_image[3]), filter_image[4])
+        
+        cv2.imshow("result", result)
+
+    	cv2.waitKey(1)
+
+def main():
+    global pedestrian_pub
+    rospy.init_node('ped_detection')
+    # Define your image topic
+    image_topic = "/axis/image_rect_color/compressed"
+    # Set up your subscriber and define its callback
+    rospy.Subscriber(image_topic, CompressedImage, image_callback)
+    # publish results
+    pedestrian_pub = rospy.Publisher("/pedestrian",pedestrian,queue_size=1)
+    # Spin until ctrl + c
+    rospy.spin()
+
+if __name__ == '__main__':
+    main()

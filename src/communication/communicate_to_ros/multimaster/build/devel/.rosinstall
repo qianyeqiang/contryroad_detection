@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/cyberc3/catkin_ws/src/CyberTiggo/communication/communicate_to_ros/multimaster/build/devel/setup.sh

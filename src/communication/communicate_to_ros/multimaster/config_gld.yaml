@@ -1,0 +1,2 @@
+local_pubs: [imu_torso/xsens/data,rtk/fix,/n280/fix,/n280/GPS_N280/orientation,can_frame]
+foreign_pubs: [gld/pose_gld]

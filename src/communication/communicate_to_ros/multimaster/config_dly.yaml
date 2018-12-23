@@ -1,0 +1,2 @@
+local_pubs: [/Inertial/gps/fix,/Inertial/imu/data,/Inertial/heading]
+foreign_pubs: [steer_conde,velocity_conde]
